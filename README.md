@@ -45,8 +45,9 @@ Required methods that your custom object need to implement are:
 
 ##Requirements
 
-*	Xcode 6
-*	iOS 8.0
+*	Xcode 8+
+*	iOS 8.0+
+*	Swift 2.3
 
 ##Installation
 

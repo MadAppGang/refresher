@@ -26,5 +26,5 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
 
-  s.dependency  'ReachabilitySwift'
+  s.dependency  'ReachabilitySwift', '2.4'
 end
