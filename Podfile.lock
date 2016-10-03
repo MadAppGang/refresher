@@ -1,7 +1,7 @@
 PODS:
-  - ReachabilitySwift (2.1)
-  - Refresher (0.3.0):
-    - ReachabilitySwift
+  - ReachabilitySwift (3)
+  - Refresher (0.4.0):
+    - ReachabilitySwift (~> 3)
 
 DEPENDENCIES:
   - Refresher (from `.`)
@@ -11,7 +11,9 @@ EXTERNAL SOURCES:
     :path: .
 
 SPEC CHECKSUMS:
-  ReachabilitySwift: 99bb7acceebb90b2048b4a8fd6539be96454dcb2
-  Refresher: 3a9375207134f3f26efcb4fc25c8906286cfe610
+  ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
+  Refresher: 0cc110105967d4a51907812ecfacc9bb496845d5
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: cee88143199165d338734f88f64b7252e0610964
+
+COCOAPODS: 1.0.1
