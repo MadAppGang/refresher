@@ -30,12 +30,12 @@ import QuartzCore
 class BeatAnimator: UIView, PullToRefreshViewDelegate {
     
     enum Layout {
-        case Top, Bottom
+        case top, bottom
     }
     
-    private let layerLoader = CAShapeLayer()
-    private let layerSeparator = CAShapeLayer()
-    var layout:Layout = .Bottom {
+    fileprivate let layerLoader = CAShapeLayer()
+    fileprivate let layerSeparator = CAShapeLayer()
+    var layout:Layout = .bottom {
         didSet {
             self.setNeedsLayout()
         }
@@ -45,30 +45,30 @@ class BeatAnimator: UIView, PullToRefreshViewDelegate {
         super.init(frame: frame)
         
         layerLoader.lineWidth = 4
-        layerLoader.strokeColor = UIColor(red: 0.13, green: 0.79, blue: 0.31, alpha: 1).CGColor
+        layerLoader.strokeColor = UIColor(red: 0.13, green: 0.79, blue: 0.31, alpha: 1).cgColor
         layerLoader.strokeEnd = 0
         
         layerSeparator.lineWidth = 1
-        layerSeparator.strokeColor = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1).CGColor
+        layerSeparator.strokeColor = UIColor(red: 0.7, green: 0.7, blue: 0.7, alpha: 1).cgColor
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func pullToRefresh(view: PullToRefreshView, progressDidChange progress: CGFloat) {
+    func pullToRefresh(_ view: PullToRefreshView, progressDidChange progress: CGFloat) {
         layerLoader.strokeEnd = progress
     }
     
-    func pullToRefresh(view: PullToRefreshView, stateDidChange state: PullToRefreshViewState) {
+    func pullToRefresh(_ view: PullToRefreshView, stateDidChange state: PullToRefreshViewState) {
         
     }
     
-    func pullToRefreshAnimationDidEnd(view: PullToRefreshView) {
+    func pullToRefreshAnimationDidEnd(_ view: PullToRefreshView) {
         layerLoader.removeAllAnimations()
     }
     
-    func pullToRefreshAnimationDidStart(view: PullToRefreshView) {
+    func pullToRefreshAnimationDidStart(_ view: PullToRefreshView) {
         addAnimations()
     }
     
@@ -79,7 +79,7 @@ class BeatAnimator: UIView, PullToRefreshViewDelegate {
         pathAnimationEnd.autoreverses = true
         pathAnimationEnd.fromValue = 1
         pathAnimationEnd.toValue = 0.8
-        layerLoader.addAnimation(pathAnimationEnd, forKey: "strokeEndAnimation")
+        layerLoader.add(pathAnimationEnd, forKey: "strokeEndAnimation")
         
         let pathAnimationStart = CABasicAnimation(keyPath: "strokeStart")
         pathAnimationStart.duration = 0.5
@@ -87,7 +87,7 @@ class BeatAnimator: UIView, PullToRefreshViewDelegate {
         pathAnimationStart.autoreverses = true
         pathAnimationStart.fromValue = 0
         pathAnimationStart.toValue = 0.2
-        layerLoader.addAnimation(pathAnimationStart, forKey: "strokeStartAnimation")
+        layerLoader.add(pathAnimationStart, forKey: "strokeStartAnimation")
     }
     
     override func layoutSubviews() {
@@ -100,37 +100,37 @@ class BeatAnimator: UIView, PullToRefreshViewDelegate {
                 superview.layer.addSublayer(layerSeparator)
             }
             
-            let verticalPosition = layout == .Bottom ? superview.frame.height - 3 : 2
+            let verticalPosition = layout == .bottom ? superview.frame.height - 3 : 2
             let bezierPathLoader = UIBezierPath()
-            bezierPathLoader.moveToPoint(CGPointMake(0, verticalPosition))
-            bezierPathLoader.addLineToPoint(CGPoint(x: superview.frame.width, y: verticalPosition))
+            bezierPathLoader.move(to: CGPoint(x: 0, y: verticalPosition))
+            bezierPathLoader.addLine(to: CGPoint(x: superview.frame.width, y: verticalPosition))
 
-            let verticalPositionSeparator = layout == .Bottom ? superview.frame.height - 1 : 0
+            let verticalPositionSeparator = layout == .bottom ? superview.frame.height - 1 : 0
             let bezierPathSeparator = UIBezierPath()
-            bezierPathSeparator.moveToPoint(CGPointMake(0, verticalPositionSeparator))
-            bezierPathSeparator.addLineToPoint(CGPoint(x: superview.frame.width, y: verticalPositionSeparator))
+            bezierPathSeparator.move(to: CGPoint(x: 0, y: verticalPositionSeparator))
+            bezierPathSeparator.addLine(to: CGPoint(x: superview.frame.width, y: verticalPositionSeparator))
             
-            layerLoader.path = bezierPathLoader.CGPath
-            layerSeparator.path = bezierPathSeparator.CGPath
+            layerLoader.path = bezierPathLoader.cgPath
+            layerSeparator.path = bezierPathSeparator.cgPath
         }
     }
 }
 
 extension BeatAnimator:  LoadMoreViewDelegate {
     
-    func loadMoreAnimationDidStart(view: LoadMoreView) {
+    func loadMoreAnimationDidStart(_ view: LoadMoreView) {
         addAnimations()
     }
     
-    func loadMoreAnimationDidEnd(view: LoadMoreView) {
+    func loadMoreAnimationDidEnd(_ view: LoadMoreView) {
         layerLoader.removeAllAnimations()
     }
     
-    func loadMore(view: LoadMoreView, progressDidChange progress: CGFloat) {
+    func loadMore(_ view: LoadMoreView, progressDidChange progress: CGFloat) {
         layerLoader.strokeEnd = progress
     }
     
-    func loadMore(view: LoadMoreView, stateDidChange state: LoadMoreViewState) {
+    func loadMore(_ view: LoadMoreView, stateDidChange state: LoadMoreViewState) {
         
     }
 }

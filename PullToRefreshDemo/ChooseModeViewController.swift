@@ -21,44 +21,44 @@ class ChooseModeViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func defaultAction(sender: AnyObject) {
-        showControllerWithMode(.Default)
+    @IBAction func defaultAction(_ sender: AnyObject) {
+        showControllerWithMode(.default)
     }
 
-    @IBAction func beatAction(sender: AnyObject) {
-        showControllerWithMode(.Beat)
+    @IBAction func beatAction(_ sender: AnyObject) {
+        showControllerWithMode(.beat)
     }
     
-    @IBAction func pacmanAction(sender: AnyObject) {
-        showControllerWithMode(.Pacman)
+    @IBAction func pacmanAction(_ sender: AnyObject) {
+        showControllerWithMode(.pacman)
     }
     
-    @IBAction func customAction(sender: AnyObject) {
-        showControllerWithMode(.Custom)
+    @IBAction func customAction(_ sender: AnyObject) {
+        showControllerWithMode(.custom)
     }
     
-    @IBAction func loadMoreDefaultAction(sender: AnyObject) {
-        showControllerWithMode(.LoadMoreDefault)
+    @IBAction func loadMoreDefaultAction(_ sender: AnyObject) {
+        showControllerWithMode(.loadMoreDefault)
     }
     
-    @IBAction func loadMoreCustomAction(sender: AnyObject) {
-        showControllerWithMode(.LoadMoreCustom)
+    @IBAction func loadMoreCustomAction(_ sender: AnyObject) {
+        showControllerWithMode(.loadMoreCustom)
     }
     
-    @IBAction func reachabilityAction(sender: AnyObject) {
-        showControllerWithMode(.InternetConnectionLost)
+    @IBAction func reachabilityAction(_ sender: AnyObject) {
+        showControllerWithMode(.internetConnectionLost)
     }
     
-    func showControllerWithMode(mode: ExampleMode) {
-        if let pullToRefreshViewControler = self.storyboard?.instantiateViewControllerWithIdentifier("PullToRefreshViewController") as? PullToRefreshViewController {
+    func showControllerWithMode(_ mode: ExampleMode) {
+        if let pullToRefreshViewControler = self.storyboard?.instantiateViewController(withIdentifier: "PullToRefreshViewController") as? PullToRefreshViewController {
             pullToRefreshViewControler.exampleMode = mode
             navigationController?.pushViewController(pullToRefreshViewControler, animated: true)
         }
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "reachabilityCustom" {
-            if let vc = segue.destinationViewController as? ConnectionLostViewController {
+            if let vc = segue.destination as? ConnectionLostViewController {
                 vc.showCustomView = true
             }
         }

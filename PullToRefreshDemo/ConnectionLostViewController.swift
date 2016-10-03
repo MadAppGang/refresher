@@ -17,9 +17,9 @@ class ConnectionLostViewController: UIViewController {
         super.viewDidLoad()
         
         tableView.addPullToRefresh {
-            NSOperationQueue().addOperationWithBlock { [weak self] in
+            OperationQueue().addOperation { [weak self] in
                 sleep(20)
-                NSOperationQueue.mainQueue().addOperationWithBlock {
+                OperationQueue.main.addOperation {
                     print("Pull to refresh timeout fire")
                     self?.tableView.stopPullToRefresh()
                 }
@@ -28,7 +28,7 @@ class ConnectionLostViewController: UIViewController {
         
         
         if showCustomView {
-            if let customSubview = NSBundle.mainBundle().loadNibNamed("NoConnectionCustomView", owner: self, options: nil).first as? UIView {
+            if let customSubview = Bundle.main.loadNibNamed("NoConnectionCustomView", owner: self, options: nil)?.first as? UIView {
                 tableView.addReachabilityView(customSubview) { status in
                     print("reachability changed with custom view \(status)")
                 }
@@ -53,25 +53,25 @@ class ConnectionLostViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func tableView(tableView: UITableView!, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView!, numberOfRowsInSection section: Int) -> Int {
         return self.rowsCount
     }
     
-    func tableView(tableView: UITableView!, cellForRowAtIndexPath indexPath: NSIndexPath!) -> UITableViewCell! {
-        let cell = UITableViewCell(style: .Default, reuseIdentifier: "Cell")
+    func tableView(_ tableView: UITableView!, cellForRowAtIndexPath indexPath: IndexPath!) -> UITableViewCell! {
+        let cell = UITableViewCell(style: .default, reuseIdentifier: "Cell")
         cell.textLabel?.text = "Row " + String(indexPath.row + 1)
         return cell
     }
 
-    @IBAction func showView(sender: AnyObject) {
+    @IBAction func showView(_ sender: AnyObject) {
         tableView.showReachabilityView()
     }
 
-    @IBAction func hideView(sender: AnyObject) {
+    @IBAction func hideView(_ sender: AnyObject) {
         tableView.hideReachabilityView()
     }
     
-    @IBAction func changeStickyMode(sender: AnyObject) {
+    @IBAction func changeStickyMode(_ sender: AnyObject) {
         if let rv = tableView.сonnectionLostView {
             rv.stickMode = !rv.stickMode
         }

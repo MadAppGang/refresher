@@ -24,28 +24,28 @@ extension UIScrollView {
 
 
     // If you want to add pull to refresh functionality to your UIScrollView just call this method and pass action closure you want to execute while pull to refresh is animating. If you want to stop pull to refresh you must do that manually calling stopPullToRefreshView methods on your scroll view
-    public func addLoadMore(action action:(() -> ())) {
+    public func addLoadMore(_ action:@escaping (() -> ())) {
         let y = contentSize.height + contentInset.bottom + contentInset.top
-        let loadMoreView = LoadMoreView(action: action, frame: CGRectMake(0, y, self.frame.size.width, scrollToLoadMoreDefaultHeight))
+        let loadMoreView = LoadMoreView(action: action, frame: CGRect(x: 0, y: y, width: self.frame.size.width, height: scrollToLoadMoreDefaultHeight))
         loadMoreView.tag = scrollToLoadMoreTag
         addSubview(loadMoreView)
     }
     
     
     // If you want to use your custom animation and custom subview when pull to refresh is animating, you should call this method and pass your animator and view objects.
-    public func addLoadMore(animator animator: LoadMoreViewDelegate, subview: UIView, action:(() -> ())) {
+    public func addLoadMore(_ animator: LoadMoreViewDelegate, subview: UIView, action:@escaping (() -> ())) {
         let height = subview.frame.height
         let y = contentSize.height + contentInset.bottom + contentInset.top
-        let loadMoreView = LoadMoreView(action: action, frame: CGRectMake(0, y, self.frame.size.width, height), animator: animator, subview: subview)
+        let loadMoreView = LoadMoreView(action: action, frame: CGRect(x: 0, y: y, width: self.frame.size.width, height: height), animator: animator, subview: subview)
         loadMoreView.tag = scrollToLoadMoreTag
         addSubview(loadMoreView)
     }
     
     //
-    public func addLoadMore<T: UIView where T: LoadMoreViewDelegate>(animator animator: T, action:(() -> ())) {
+    public func addLoadMore<T: UIView>(_ animator: T, action:@escaping (() -> ())) where T: LoadMoreViewDelegate {
         let height = animator.frame.height
         let y = contentSize.height + contentInset.bottom + contentInset.top
-        let loadMoreView = LoadMoreView(action: action, frame: CGRectMake(0, y, self.frame.size.width, height), animator: animator, subview: animator)
+        let loadMoreView = LoadMoreView(action: action, frame: CGRect(x: 0, y: y, width: self.frame.size.width, height: height), animator: animator, subview: animator)
         loadMoreView.tag = scrollToLoadMoreTag
         addSubview(loadMoreView)
     }

@@ -14,35 +14,35 @@ private let ContentSizeKeyPath = "contentSize"
 
 
 public enum LoadMoreViewState {
-    case Loading
-    case ScrollToLoadMore
-    case ReleaseToLoadMore
+    case loading
+    case scrollToLoadMore
+    case releaseToLoadMore
 }
 
 public protocol LoadMoreViewDelegate {
-    func loadMoreAnimationDidStart(view: LoadMoreView)
-    func loadMoreAnimationDidEnd(view: LoadMoreView)
-    func loadMore(view: LoadMoreView, progressDidChange progress: CGFloat)
-    func loadMore(view: LoadMoreView, stateDidChange state: LoadMoreViewState)
+    func loadMoreAnimationDidStart(_ view: LoadMoreView)
+    func loadMoreAnimationDidEnd(_ view: LoadMoreView)
+    func loadMore(_ view: LoadMoreView, progressDidChange progress: CGFloat)
+    func loadMore(_ view: LoadMoreView, stateDidChange state: LoadMoreViewState)
 }
 
-public class LoadMoreView: UIView {
-    private var scrollViewBouncesDefaultValue: Bool = false
-    private var scrollViewInsetsDefaultValue: UIEdgeInsets = UIEdgeInsetsZero
+open class LoadMoreView: UIView {
+    fileprivate var scrollViewBouncesDefaultValue: Bool = false
+    fileprivate var scrollViewInsetsDefaultValue: UIEdgeInsets = UIEdgeInsets.zero
     
-    private var animator: LoadMoreViewDelegate
-    private var action: (() -> ()) = {}
+    fileprivate var animator: LoadMoreViewDelegate
+    fileprivate var action: (() -> ()) = {}
     
-    private var previousOffset: CGFloat = 0
+    fileprivate var previousOffset: CGFloat = 0
     
-    public var disabled = false {
+    open var disabled = false {
         didSet {
-            hidden = disabled
+            isHidden = disabled
             if disabled == true {
                 if loading == true {
                     loading = false
                 }
-                animator.loadMore(self, stateDidChange: .ScrollToLoadMore)
+                animator.loadMore(self, stateDidChange: .scrollToLoadMore)
                 animator.loadMore(self, progressDidChange: 0)
             }
         }
@@ -59,7 +59,7 @@ public class LoadMoreView: UIView {
     }
 
     //MARK: Object lifecycle methods
-    convenience init(action :(() -> ()), frame: CGRect) {
+    convenience init(action :@escaping (() -> ()), frame: CGRect) {
         var bounds = frame
         bounds.origin.y = 0
         let animator = Animator(frame: bounds)
@@ -68,14 +68,14 @@ public class LoadMoreView: UIView {
         addSubview(animator.animatorView)
     }
     
-    convenience init(action :(() -> ()), frame: CGRect, animator: LoadMoreViewDelegate, subview: UIView) {
+    convenience init(action :@escaping (() -> ()), frame: CGRect, animator: LoadMoreViewDelegate, subview: UIView) {
         self.init(frame: frame, animator: animator)
         self.action = action;
         subview.frame = self.bounds
         addSubview(subview)
     }
     
-    convenience init(action :(() -> ()), frame: CGRect, animator: LoadMoreViewDelegate) {
+    convenience init(action :@escaping (() -> ()), frame: CGRect, animator: LoadMoreViewDelegate) {
         self.init(frame: frame, animator: animator)
         self.action = action;
     }
@@ -83,11 +83,11 @@ public class LoadMoreView: UIView {
     init(frame: CGRect, animator: LoadMoreViewDelegate) {
         self.animator = animator
         super.init(frame: frame)
-        self.autoresizingMask = .FlexibleWidth
+        self.autoresizingMask = .flexibleWidth
     }
     
     public required init?(coder aDecoder: NSCoder) {
-        self.animator = Animator(frame: CGRectZero)
+        self.animator = Animator(frame: CGRect.zero)
         super.init(coder: aDecoder)
         // Currently it is not supported to load view from nib
         //it's little bit hacky
@@ -102,7 +102,7 @@ public class LoadMoreView: UIView {
 
     //MARK: UIView methods
     
-    public override func willMoveToSuperview(newSuperview: UIView!) {
+    open override func willMove(toSuperview newSuperview: UIView!) {
         superview?.removeObserver(self, forKeyPath: ContentOffsetKeyPath, context: &LoadMoreKVOContext)
         superview?.removeObserver(self, forKeyPath: ContentSizeKeyPath, context: &LoadMoreKVOContext)
         self.animator.loadMore(self, progressDidChange: 0.0)
@@ -110,9 +110,9 @@ public class LoadMoreView: UIView {
         if let scrollView = newSuperview as? UIScrollView {
             scrollViewBouncesDefaultValue = scrollView.bounces
             scrollViewInsetsDefaultValue = scrollView.contentInset
-            processContentChange(scrollView: scrollView)
-            scrollView.addObserver(self, forKeyPath: ContentOffsetKeyPath, options: .Initial, context: &LoadMoreKVOContext)
-            scrollView.addObserver(self, forKeyPath: ContentSizeKeyPath, options: .Initial, context: &LoadMoreKVOContext)
+            processContentChange(scrollView)
+            scrollView.addObserver(self, forKeyPath: ContentOffsetKeyPath, options: .initial, context: &LoadMoreKVOContext)
+            scrollView.addObserver(self, forKeyPath: ContentSizeKeyPath, options: .initial, context: &LoadMoreKVOContext)
 
         }
     }
@@ -120,27 +120,27 @@ public class LoadMoreView: UIView {
     
     //MARK: KVO methods
     
-    public override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<()>) {
+    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if (context == &LoadMoreKVOContext) {
-            if let scrollView = superview as? UIScrollView where object as? NSObject == scrollView {
+            if let scrollView = superview as? UIScrollView , object as? NSObject == scrollView {
                 if keyPath == ContentOffsetKeyPath {
-                    processOffsetChange(scrollView: scrollView)
+                    processOffsetChange(scrollView)
                 } else if keyPath == ContentSizeKeyPath {
-                    processContentChange(scrollView: scrollView)
+                    processContentChange(scrollView)
                 }
             }
         } else {
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
     
-    func processOffsetChange(scrollView scrollView: UIScrollView) {
+    func processOffsetChange(_ scrollView: UIScrollView) {
 
         if disabled == true { return }
         
         var contentHeight:CGFloat = 0
         if let collectionView = scrollView as? UICollectionView {
-            contentHeight = collectionView.collectionViewLayout.collectionViewContentSize().height
+            contentHeight = collectionView.collectionViewLayout.collectionViewContentSize.height
         } else {
             contentHeight = scrollView.contentSize.height
         }
@@ -152,25 +152,25 @@ public class LoadMoreView: UIView {
             (previousOffset + scrollView.frame.size.height) - contentHeight
         
         if (overOffset > frame.size.height) {
-            if (scrollView.dragging == false && loading == false) {
+            if (scrollView.isDragging == false && loading == false) {
                 loading = true
             } else if (loading) {
-                self.animator.loadMore(self, stateDidChange: .Loading)
+                self.animator.loadMore(self, stateDidChange: .loading)
             } else {
-                self.animator.loadMore(self, stateDidChange: .ReleaseToLoadMore)
+                self.animator.loadMore(self, stateDidChange: .releaseToLoadMore)
                 self.animator.loadMore(self, progressDidChange: overOffset / frame.size.height)
             }
         } else if (loading) {
-            self.animator.loadMore(self, stateDidChange: .Loading)
+            self.animator.loadMore(self, stateDidChange: .loading)
         } else if (overOffset > 0) {
-            self.animator.loadMore(self, stateDidChange: .ScrollToLoadMore)
+            self.animator.loadMore(self, stateDidChange: .scrollToLoadMore)
             self.animator.loadMore(self, progressDidChange: overOffset / frame.size.height)
         }
         previousOffset = scrollView.contentOffset.y
 
     }
 
-    func processContentChange(scrollView scrollView: UIScrollView) {
+    func processContentChange(_ scrollView: UIScrollView) {
         
         // change contentSize
         
@@ -186,7 +186,7 @@ public class LoadMoreView: UIView {
     
     //MARK: ScrollToLoadMore methods
     
-    internal func startAnimating(animated:Bool) {
+    internal func startAnimating(_ animated:Bool) {
         if let scrollView = superview as? UIScrollView {
             var insets = scrollView.contentInset
             insets.bottom += scrollView.contentSize.height <  scrollView.frame.size.height ?
@@ -196,7 +196,7 @@ public class LoadMoreView: UIView {
             self.scrollViewBouncesDefaultValue = scrollView.bounces
             scrollView.bounces = false
             if animated == true {
-                UIView.animateWithDuration(0.3, delay: 0, options:[], animations: {
+                UIView.animate(withDuration: 0.3, delay: 0, options:[], animations: {
                     scrollView.contentInset = insets
                 }, completion: {finished in
                     self.animator.loadMoreAnimationDidStart(self)
@@ -210,16 +210,16 @@ public class LoadMoreView: UIView {
         }
     }
     
-    internal func stopAnimating(animated:Bool) {
+    internal func stopAnimating(_ animated:Bool) {
         self.animator.loadMoreAnimationDidEnd(self)
         if let scrollView = superview as? UIScrollView {
             scrollView.bounces = self.scrollViewBouncesDefaultValue
             if animated == true {
-                UIView.animateWithDuration(0.3, animations: {
+                UIView.animate(withDuration: 0.3, animations: {
                     scrollView.contentInset = self.scrollViewInsetsDefaultValue
-                }) { finished in
+                }, completion: { finished in
                     self.animator.loadMore(self, progressDidChange: 0.0)
-                }
+                }) 
             } else {
                 scrollView.contentInset = self.scrollViewInsetsDefaultValue
                 self.animator.loadMore(self, progressDidChange: 0.0)

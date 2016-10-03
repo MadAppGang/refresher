@@ -38,24 +38,24 @@ extension UIScrollView {
     }
     
     // If you want to add pull to refresh functionality to your UIScrollView just call this method and pass action closure you want to execute while pull to refresh is animating. If you want to stop pull to refresh you must do that manually calling stopPullToRefreshView methods on your scroll view
-    public func addPullToRefresh(action action:(() -> ())) {
-        let pullToRefreshView = PullToRefreshView(action: action, frame: CGRectMake(0, -pullToRefreshDefaultHeight, self.frame.size.width, pullToRefreshDefaultHeight))
+    public func addPullToRefresh(_ action:@escaping (() -> ())) {
+        let pullToRefreshView = PullToRefreshView(action: action, frame: CGRect(x: 0, y: -pullToRefreshDefaultHeight, width: self.frame.size.width, height: pullToRefreshDefaultHeight))
         pullToRefreshView.tag = pullToRefreshTag
         addSubview(pullToRefreshView)
     }
     
     // If you want to use your custom animation and custom subview when pull to refresh is animating, you should call this method and pass your animator and view objects.
-    public func addPullToRefresh(animator animator: PullToRefreshViewDelegate, subview: UIView, action:(() -> ())) {
+    public func addPullToRefresh(_ animator: PullToRefreshViewDelegate, subview: UIView, action:@escaping (() -> ())) {
         let height = subview.frame.height
-        let pullToRefreshView = PullToRefreshView(action: action, frame: CGRectMake(0, -height, self.frame.size.width, height), animator: animator, subview: subview)
+        let pullToRefreshView = PullToRefreshView(action: action, frame: CGRect(x: 0, y: -height, width: self.frame.size.width, height: height), animator: animator, subview: subview)
         pullToRefreshView.tag = pullToRefreshTag
         addSubview(pullToRefreshView)
     }
     
     //Add custom view with animator, where this custom view is animator itself
-    public func addPullToRefresh<T: UIView where T: PullToRefreshViewDelegate>(animator animator: T, action:(() -> ())) {
+    public func addPullToRefresh<T: UIView>(_ animator: T, action:@escaping (() -> ())) where T: PullToRefreshViewDelegate {
         let height = animator.frame.height
-        let pullToRefreshView = PullToRefreshView(action: action, frame: CGRectMake(0, -height, self.frame.size.width, height), animator: animator, subview: animator)
+        let pullToRefreshView = PullToRefreshView(action: action, frame: CGRect(x: 0, y: -height, width: self.frame.size.width, height: height), animator: animator, subview: animator)
         pullToRefreshView.tag = pullToRefreshTag
         addSubview(pullToRefreshView)
     }
